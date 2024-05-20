@@ -9,7 +9,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
-    private Long userID;
+    private Long id;
     @NotBlank
     private String firstName;
     @NotBlank
@@ -21,13 +21,15 @@ public class User {
     @NotBlank
     private String password;
 
+    private String ProfilePhotoPath = "profilowe.png";
 
-    public void setUserID(Long userID) {
-        this.userID = userID;
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public Long getUserID() {
-        return userID;
+    public Long getId() {
+        return id;
     }
 
     public String getFirstName() {
@@ -68,5 +70,13 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getProfilePhotoPath() {
+        return ProfilePhotoPath;
+    }
+
+    public void setProfilePhotoPath(String profilePhotoPath) {
+        ProfilePhotoPath = profilePhotoPath;
     }
 }

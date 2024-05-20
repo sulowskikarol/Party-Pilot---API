@@ -22,7 +22,7 @@ public class Event {
     private String description;
     private String location;
     private String status;
-    private String bannerPath;
+    private String bannerPath = "default_banner.jpg";
 
     public void setId(Long id) {
         this.id = id;

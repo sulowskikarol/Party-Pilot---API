@@ -1,22 +1,25 @@
 package com.partypilot.api.controller;
 
+import com.partypilot.api.dto.UserDto;
 import com.partypilot.api.model.User;
 import com.partypilot.api.repository.UserRepository;
+import com.partypilot.api.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
 
     private final UserRepository userRepository;
+    private final UserService userService;
 
-    public UserController(UserRepository userRepository) {
+    public UserController(UserRepository userRepository, UserService userService) {
         this.userRepository = userRepository;
+        this.userService = userService;
     }
 
     @GetMapping
@@ -25,8 +28,8 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUser(@PathVariable Long id) {
-        return userRepository.findById(id)
+    public ResponseEntity<UserDto> getUser(@PathVariable Long id) {
+        return userService.getUserById(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
