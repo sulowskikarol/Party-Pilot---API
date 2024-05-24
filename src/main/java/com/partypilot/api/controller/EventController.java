@@ -3,13 +3,8 @@ package com.partypilot.api.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.partypilot.api.dto.EventShortDto;
-import com.partypilot.api.mapper.EventMapper;
 import com.partypilot.api.model.Event;
 import com.partypilot.api.service.EventService;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,12 +21,10 @@ import java.util.List;
 public class EventController {
 
     private final EventService eventService;
-    private final EventMapper eventMapper;
     private static final String UPLOAD_FOLDER = "src/main/resources/static/banners/";
 
-    public EventController(EventService eventService, EventMapper eventMapper) {
+    public EventController(EventService eventService) {
         this.eventService = eventService;
-        this.eventMapper = eventMapper;
     }
 
     @GetMapping
@@ -75,24 +68,5 @@ public class EventController {
     public ResponseEntity<?> deleteEvent(@PathVariable Long id) {
         eventService.deleteEvent(id);
         return ResponseEntity.ok().build();
-    }
-
-    @GetMapping("/banner/{filename}")
-    public ResponseEntity<Resource> getBanner(@PathVariable String filename) {
-        try {
-            Path filePath = Paths.get(UPLOAD_FOLDER).resolve(filename).normalize();
-            Resource resource = new UrlResource(filePath.toUri());
-
-            if (resource.exists()) {
-                return ResponseEntity.ok()
-                        .contentType(MediaType.valueOf(Files.probeContentType(filePath)))
-                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
-                        .body(resource);
-            } else {
-                return ResponseEntity.notFound().build();
-            }
-        } catch (IOException ex) {
-            return ResponseEntity.status(500).build();
-        }
     }
 }

@@ -12,7 +12,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.nio.CharBuffer;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -51,8 +53,30 @@ public class UserService {
         return userMapper.toUserDto(savedUser);
     }
 
+    public List<UserDto> getAllUsers() {
+        return userRepository.findAll()
+                .stream().map(userMapper::toUserDto)
+                .collect(Collectors.toList());
+    }
+
     public Optional<UserDto> getUserById(Long id) {
         return userRepository.findById(id)
                 .map(userMapper::toUserDto);
     }
+
+    public Optional<UserDto> updateUser(Long id, User user) {
+        return userRepository.findById(id)
+                .map(userFromDb -> {
+                    userFromDb.setFirstName(user.getFirstName());
+                    userFromDb.setLastName(user.getLastName());
+                    userFromDb.setPhoneNumber(user.getPhoneNumber());
+                    userFromDb.setProfilePhotoPath(user.getProfilePhotoPath());
+                    return userMapper.toUserDto(userRepository.save(userFromDb));
+                });
+    }
+
+    public void deleteUser(Long id) {
+        userRepository.deleteById(id);
+    }
+
 }
