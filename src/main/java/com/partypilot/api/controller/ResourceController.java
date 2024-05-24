@@ -17,13 +17,13 @@ import java.nio.file.Paths;
 @RestController
 public class ResourceController {
 
-    @GetMapping("/photo/{filename}")
+    @GetMapping("/photos/{filename}")
     public ResponseEntity<Resource> getPhoto(@PathVariable String filename) {
         Path filePath = Paths.get("src/main/resources/static/profilePhotos/").resolve(filename).normalize();
         return getResource(filePath);
     }
 
-    @GetMapping("/banner/{filename}")
+    @GetMapping("/banners/{filename}")
     public ResponseEntity<Resource> getBanner(@PathVariable String filename) {
         Path filePath = Paths.get("src/main/resources/static/banners/").resolve(filename).normalize();
         return getResource(filePath);

@@ -1,6 +1,5 @@
 package com.partypilot.api.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.partypilot.api.dto.UserDto;
 import com.partypilot.api.model.User;
 import com.partypilot.api.service.UserService;
@@ -9,9 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 @RestController
@@ -19,7 +15,6 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-    private static final String UPLOAD_FOLDER = "src/main/resources/static/profilePhotos/";
 
     public UserController(UserService userService) {
         this.userService = userService;
@@ -38,18 +33,11 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserDto> modifyUser(@PathVariable Long id, @RequestParam("user") String userStr, @RequestParam(value = "file", required = false) MultipartFile file) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        User user = mapper.readValue(userStr, User.class);
-
-        if (file != null && !file.isEmpty()) {
-            byte[] bytes = file.getBytes();
-            Path path = Paths.get(UPLOAD_FOLDER + file.getOriginalFilename());
-            Files.write(path, bytes);
-
-            user.setProfilePhotoPath(file.getOriginalFilename());
-        }
-
+    public ResponseEntity<UserDto> modifyUser(@PathVariable Long id,
+                                              @RequestParam("user") String userStr,
+                                              @RequestParam(value = "file", required = false) MultipartFile file)
+            throws IOException {
+        User user = userService.createUserFromRequest(userStr, file);
         return userService.updateUser(id, user)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
