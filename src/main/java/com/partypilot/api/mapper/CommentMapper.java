@@ -23,6 +23,10 @@ public abstract class CommentMapper {
     @Mapping(source = "event_id", target = "event")
     public abstract Comment dtoToComment(CommentDto commentDto);
 
+    @Mapping(source = "user.id", target = "user_id")
+    @Mapping(source = "event.id", target = "event_id")
+    public abstract CommentDto commentToDto(Comment comment);
+
     protected User mapUser(Long user_id) {
         return userRepository.findById(user_id)
                 .orElseThrow(() -> new AppException("User not found", HttpStatus.NOT_FOUND));
@@ -32,4 +36,5 @@ public abstract class CommentMapper {
         return eventService.getEventById(event_id)
                 .orElseThrow(() -> new AppException("Event not found", HttpStatus.NOT_FOUND));
     }
+
 }

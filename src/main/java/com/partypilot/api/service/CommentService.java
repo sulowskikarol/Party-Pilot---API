@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CommentService {
@@ -24,15 +25,17 @@ public class CommentService {
         this.eventService = eventService;
     }
 
-    public List<Comment> getCommentsByEventId(Long eventId) {
+    public List<CommentDto> getCommentsByEventId(Long eventId) {
         Event event = eventService.getEventById(eventId)
                 .orElseThrow(() -> new AppException("Event not found.", HttpStatus.NOT_FOUND));
-        return commentRepository.findByEvent(event);
+        List<Comment> comments = commentRepository.findByEvent(event);
+        return comments.stream().map(commentMapper::commentToDto).collect(Collectors.toList());
     }
 
-    public Comment saveComment(CommentDto commentDto) {
+    public CommentDto saveComment(CommentDto commentDto) {
         Comment comment = commentMapper.dtoToComment(commentDto);
-        return commentRepository.save(comment);
+        comment.getEvent().addComment(comment);
+        return commentMapper.commentToDto(commentRepository.save(comment));
     }
 
 }

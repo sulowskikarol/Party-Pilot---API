@@ -46,14 +46,14 @@ public class CommentController {
 //    }
 
     @PostMapping
-    public ResponseEntity<Comment> addComment(@RequestBody CommentDto commentDto) {
-        Comment comment = commentService.saveComment(commentDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(comment);
+    public ResponseEntity<CommentDto> addComment(@RequestBody CommentDto commentDto) {
+        CommentDto savedComment = commentService.saveComment(commentDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedComment);
 
     }
 
     @GetMapping("/{eventId}")
-    public ResponseEntity<List<Comment>> getComment(@PathVariable Long eventId) {
+    public ResponseEntity<List<CommentDto>> getComment(@PathVariable Long eventId) {
         return ResponseEntity.ok(commentService.getCommentsByEventId(eventId));
     }
 }

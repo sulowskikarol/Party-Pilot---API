@@ -3,10 +3,19 @@ package com.partypilot.api.dto;
 import java.time.LocalDateTime;
 
 public class CommentDto {
+    private Long id;
     private String content;
     private LocalDateTime createdAt;
     private Long user_id;
     private Long event_id;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getContent() {
         return content;

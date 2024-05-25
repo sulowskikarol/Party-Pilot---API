@@ -90,11 +90,9 @@ public class Event {
 
     public void addComment(Comment comment) {
         comments.add(comment);
-        comment.setEvent(this);
     }
 
     public void removeComment(Comment comment) {
         comments.remove(comment);
-        comment.setEvent(null);
     }
 }
