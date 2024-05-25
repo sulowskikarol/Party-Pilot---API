@@ -5,8 +5,8 @@ import com.partypilot.api.exception.AppException;
 import com.partypilot.api.model.Comment;
 import com.partypilot.api.model.Event;
 import com.partypilot.api.model.User;
+import com.partypilot.api.repository.EventRepository;
 import com.partypilot.api.repository.UserRepository;
-import com.partypilot.api.service.EventService;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ public abstract class CommentMapper {
     @Autowired
     protected UserRepository userRepository;
     @Autowired
-    protected EventService eventService;
+    protected EventRepository eventRepository;
 
     @Mapping(source = "user_id", target = "user")
     @Mapping(source = "event_id", target = "event")
@@ -33,7 +33,7 @@ public abstract class CommentMapper {
     }
 
     protected Event mapEvent(Long event_id) {
-        return eventService.getEventById(event_id)
+        return eventRepository.findById(event_id)
                 .orElseThrow(() -> new AppException("Event not found", HttpStatus.NOT_FOUND));
     }
 

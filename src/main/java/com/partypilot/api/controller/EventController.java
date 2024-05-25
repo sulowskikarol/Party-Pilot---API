@@ -1,5 +1,6 @@
 package com.partypilot.api.controller;
 
+import com.partypilot.api.dto.EventDto;
 import com.partypilot.api.dto.EventShortDto;
 import com.partypilot.api.model.Event;
 import com.partypilot.api.service.EventService;
@@ -27,8 +28,8 @@ public class EventController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Event> getEvent(@PathVariable Long id) {
-        return eventService.getEventById(id)
+    public ResponseEntity<EventDto> getEvent(@PathVariable Long id) {
+        return eventService.getEventByIdWithComments(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }

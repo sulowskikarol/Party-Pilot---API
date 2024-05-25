@@ -2,7 +2,10 @@ package com.partypilot.api.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.partypilot.api.dto.CommentDto;
+import com.partypilot.api.dto.EventDto;
 import com.partypilot.api.dto.EventShortDto;
+import com.partypilot.api.mapper.CommentMapper;
 import com.partypilot.api.mapper.EventMapper;
 import com.partypilot.api.model.Event;
 import com.partypilot.api.repository.EventRepository;
@@ -22,11 +25,13 @@ public class EventService {
 
     private final EventRepository eventRepository;
     private final EventMapper eventMapper;
+    private final CommentMapper commentMapper;
     private static final String UPLOAD_FOLDER = "src/main/resources/static/banners/";
 
-    public EventService(EventRepository eventRepository, EventMapper eventMapper) {
+    public EventService(EventRepository eventRepository, EventMapper eventMapper, CommentMapper commentMapper) {
         this.eventRepository = eventRepository;
         this.eventMapper = eventMapper;
+        this.commentMapper = commentMapper;
     }
 
     public List<EventShortDto> getAllEvents() {
@@ -38,6 +43,17 @@ public class EventService {
 
     public Optional<Event> getEventById(Long id) {
         return eventRepository.findById(id);
+    }
+
+    public Optional<EventDto> getEventByIdWithComments(Long id) {
+        return eventRepository.findByIdWithComments(id)
+                .map(event -> {
+                    EventDto eventDto = eventMapper.toEventDto(event);
+                    List<CommentDto> commentDtos = event.getComments().stream()
+                            .map(commentMapper::commentToDto).toList();
+                    eventDto.setComments(commentDtos);
+                    return eventDto;
+                });
     }
 
     public EventShortDto saveEvent(Event event) {
