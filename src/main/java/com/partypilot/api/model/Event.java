@@ -3,6 +3,8 @@ package com.partypilot.api.model;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.LinkedList;
+import java.util.List;
 
 @Entity
 @Table(name = "events")
@@ -18,6 +20,9 @@ public class Event {
     private String description;
     private String location;
     private String bannerPath;
+
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments = new LinkedList<>();
 
     public void setId(Long id) {
         this.id = id;
@@ -81,5 +86,19 @@ public class Event {
 
     public void setBannerPath(String bannerPath) {
         this.bannerPath = bannerPath;
+    }
+
+    public void addComment(Comment comment) {
+        comments.add(comment);
+        comment.setEvent(this);
+    }
+
+    public void removeComment(Comment comment) {
+        comments.remove(comment);
+        comment.setEvent(null);
+    }
+
+    public List<Comment> getComments() {
+        return comments;
     }
 }

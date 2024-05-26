@@ -2,29 +2,27 @@ package com.partypilot.api.controller;
 
 import com.partypilot.api.dto.UserDto;
 import com.partypilot.api.model.User;
-import com.partypilot.api.repository.UserRepository;
 import com.partypilot.api.service.UserService;
-import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
 
-    private final UserRepository userRepository;
     private final UserService userService;
 
-    public UserController(UserRepository userRepository, UserService userService) {
-        this.userRepository = userRepository;
+    public UserController(UserService userService) {
         this.userService = userService;
     }
 
     @GetMapping
-    public List<User> getUsers() {
-        return userRepository.findAll();
+    public ResponseEntity<List<UserDto>> getUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 
     @GetMapping("/{id}")
@@ -34,17 +32,20 @@ public class UserController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PostMapping
-    public User addUser(@RequestBody @Valid User user) {
-        return userRepository.save(user);
+    @PutMapping("/{id}")
+    public ResponseEntity<UserDto> modifyUser(@PathVariable Long id,
+                                              @RequestParam("user") String userStr,
+                                              @RequestParam(value = "file", required = false) MultipartFile file)
+            throws IOException {
+        User user = userService.createUserFromRequest(userStr, file);
+        return userService.updateUser(id, user)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable Long id) {
-        return userRepository.findById(id)
-                .map(user -> {
-                    userRepository.delete(user);
-                    return ResponseEntity.ok().build();
-                }).orElseGet(() -> ResponseEntity.notFound().build());
+        userService.deleteUser(id);
+        return ResponseEntity.ok().build();
     }
 }
