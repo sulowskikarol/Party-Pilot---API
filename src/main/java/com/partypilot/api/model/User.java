@@ -21,7 +21,7 @@ public class User {
     @NotBlank
     private String password;
 
-    private String ProfilePhotoPath = "profilowe.png";
+    private String ProfilePhotoPath;
 
 
     public void setId(Long id) {
