@@ -1,5 +1,6 @@
 package com.partypilot.api.controller;
 
+import com.partypilot.api.dto.EventAuthorizationDto;
 import com.partypilot.api.dto.RegistrationDto;
 import com.partypilot.api.service.RegistrationService;
 import org.springframework.http.ResponseEntity;
@@ -44,5 +45,10 @@ public class RegistrationController {
     public ResponseEntity<?> deleteRegistration(@PathVariable Long id) {
         registrationService.deleteRegistration(id);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{eventId}/check-authorization")
+    public ResponseEntity<EventAuthorizationDto> checkUserRegistration(@PathVariable Long eventId) {
+        return ResponseEntity.ok(registrationService.generateEventAuthorizationDto(eventId));
     }
 }

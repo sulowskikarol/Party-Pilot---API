@@ -27,13 +27,13 @@ public abstract class RegistrationMapper {
     @Mapping(source = "event.id", target = "eventId")
     public abstract RegistrationDto registrationToDto(Registration registration);
 
-    protected User mapUser(Long user_id) {
-        return userRepository.findById(user_id)
+    protected User mapUser(Long userId) {
+        return userRepository.findById(userId)
                 .orElseThrow(() -> new AppException("User not found", HttpStatus.NOT_FOUND));
     }
 
-    protected Event mapEvent(Long event_id) {
-        return eventRepository.findById(event_id)
+    protected Event mapEvent(Long eventId) {
+        return eventRepository.findById(eventId)
                 .orElseThrow(() -> new AppException("Event not found", HttpStatus.NOT_FOUND));
     }
 }

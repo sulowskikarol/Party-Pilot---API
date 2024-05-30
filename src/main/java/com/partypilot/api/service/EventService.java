@@ -2,6 +2,7 @@ package com.partypilot.api.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.partypilot.api.config.UserAuthProvider;
 import com.partypilot.api.dto.CommentDto;
 import com.partypilot.api.dto.EventDto;
 import com.partypilot.api.dto.EventShortDto;
@@ -26,12 +27,14 @@ public class EventService {
     private final EventRepository eventRepository;
     private final EventMapper eventMapper;
     private final CommentMapper commentMapper;
+    private final UserAuthProvider userAuthProvider;
     private static final String UPLOAD_FOLDER = "src/main/resources/static/banners/";
 
-    public EventService(EventRepository eventRepository, EventMapper eventMapper, CommentMapper commentMapper) {
+    public EventService(EventRepository eventRepository, EventMapper eventMapper, CommentMapper commentMapper, UserAuthProvider userAuthProvider) {
         this.eventRepository = eventRepository;
         this.eventMapper = eventMapper;
         this.commentMapper = commentMapper;
+        this.userAuthProvider = userAuthProvider;
     }
 
     public List<EventShortDto> getAllEvents() {
@@ -91,5 +94,11 @@ public class EventService {
         }
 
         return event;
+    }
+
+    public boolean isOrganizer(Long eventId) {
+        Long userId = userAuthProvider.getUserIdFromToken();
+        Optional<Event> event = eventRepository.findById(eventId);
+        return event.isPresent() && event.get().getUserId().equals(userId);
     }
 }

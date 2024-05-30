@@ -1,5 +1,7 @@
 package com.partypilot.api.service;
 
+import com.partypilot.api.config.UserAuthProvider;
+import com.partypilot.api.dto.EventAuthorizationDto;
 import com.partypilot.api.dto.RegistrationDto;
 import com.partypilot.api.exception.AppException;
 import com.partypilot.api.mapper.RegistrationMapper;
@@ -17,11 +19,15 @@ import java.util.stream.Collectors;
 public class RegistrationService {
 
     private final RegistrationRepository registrationRepository;
+    private final EventService eventService;
     private final RegistrationMapper registrationMapper;
+    private final UserAuthProvider userAuthProvider;
 
-    public RegistrationService(RegistrationRepository registrationRepository, RegistrationMapper registrationMapper) {
+    public RegistrationService(RegistrationRepository registrationRepository, EventService eventService, RegistrationMapper registrationMapper, UserAuthProvider userAuthProvider) {
         this.registrationRepository = registrationRepository;
+        this.eventService = eventService;
         this.registrationMapper = registrationMapper;
+        this.userAuthProvider = userAuthProvider;
     }
 
     public List<RegistrationDto> getRegistrationsForEvent(Long eventId) {
@@ -31,6 +37,10 @@ public class RegistrationService {
     }
 
     public RegistrationDto createRegistration(RegistrationDto registrationDto) {
+        if (isUserRegisteredForEvent(registrationDto.getEventId())) {
+            throw new AppException("User already registered", HttpStatus.CONFLICT);
+        }
+        registrationDto.setUserId(userAuthProvider.getUserIdFromToken());
         Registration registration = registrationMapper.dtoToRegistration(registrationDto);
         registration.setStatus(RegistrationStatus.PENDING);
         Registration saved = registrationRepository.save(registration);
@@ -55,5 +65,21 @@ public class RegistrationService {
 
     public void deleteRegistration(Long registrationId) {
         registrationRepository.deleteById(registrationId);
+    }
+
+    public EventAuthorizationDto generateEventAuthorizationDto(Long eventId) {
+        Long userId = userAuthProvider.getUserIdFromToken();
+        Optional<Registration> registration = registrationRepository.findByUserIdAndEventId(userId, eventId);
+
+        boolean isRegistered = registration.isPresent();
+        boolean isApproved = registration.isPresent() && registration.get().getStatus().equals(RegistrationStatus.CONFIRMED);
+        boolean isOrganizer = eventService.isOrganizer(userId);
+
+        return new EventAuthorizationDto(isRegistered, isApproved, isOrganizer);
+    }
+
+    private boolean isUserRegisteredForEvent(Long eventId) {
+        Long userId = userAuthProvider.getUserIdFromToken();
+        return registrationRepository.existsByUserIdAndEventId(userId, eventId);
     }
 }

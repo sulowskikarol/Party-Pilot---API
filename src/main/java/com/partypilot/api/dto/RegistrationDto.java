@@ -4,8 +4,8 @@ import com.partypilot.api.model.enums.RegistrationStatus;
 
 public class RegistrationDto {
     private Long id;
-    private String eventId;
-    private String userId;
+    private Long eventId;
+    private Long userId;
     private RegistrationStatus status;
     private String additionalNotes;
 
@@ -17,19 +17,19 @@ public class RegistrationDto {
         this.id = id;
     }
 
-    public String getEventId() {
+    public Long getEventId() {
         return eventId;
     }
 
-    public void setEventId(String eventId) {
+    public void setEventId(Long eventId) {
         this.eventId = eventId;
     }
 
-    public String getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 
