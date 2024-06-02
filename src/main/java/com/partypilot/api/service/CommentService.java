@@ -38,4 +38,13 @@ public class CommentService {
         return commentMapper.commentToDto(commentRepository.save(comment));
     }
 
+    public void deleteComment(Long commentId) {
+        commentRepository.findById(commentId)
+                        .map(comment -> {
+                            comment.getEvent().removeComment(comment);
+                            return null;
+                        });
+        commentRepository.deleteById(commentId);
+    }
+
 }

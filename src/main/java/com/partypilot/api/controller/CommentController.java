@@ -26,7 +26,13 @@ public class CommentController {
     }
 
     @GetMapping("/{eventId}")
-    public ResponseEntity<List<CommentDto>> getComment(@PathVariable Long eventId) {
+    public ResponseEntity<List<CommentDto>> getCommentsByEventId(@PathVariable Long eventId) {
         return ResponseEntity.ok(commentService.getCommentsByEventId(eventId));
+    }
+
+    @DeleteMapping("/{commentId}")
+    public ResponseEntity<?> deleteComment(@PathVariable Long commentId) {
+        commentService.deleteComment(commentId);
+        return ResponseEntity.ok().build();
     }
 }
