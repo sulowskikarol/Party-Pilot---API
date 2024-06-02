@@ -28,7 +28,7 @@ public class CommentService {
     public List<CommentDto> getCommentsByEventId(Long eventId) {
         Event event = eventService.getEventById(eventId)
                 .orElseThrow(() -> new AppException("Event not found.", HttpStatus.NOT_FOUND));
-        List<Comment> comments = commentRepository.findByEvent(event);
+        List<Comment> comments = commentRepository.findByEventOrderByCreatedAtDesc(event);
         return comments.stream().map(commentMapper::commentToDto).collect(Collectors.toList());
     }
 
