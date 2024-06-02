@@ -21,10 +21,14 @@ public abstract class CommentMapper {
 
     @Mapping(source = "user_id", target = "user")
     @Mapping(source = "event_id", target = "event")
+    @Mapping(source = "commentContent", target = "content")
     public abstract Comment dtoToComment(CommentDto commentDto);
 
     @Mapping(source = "user.id", target = "user_id")
     @Mapping(source = "event.id", target = "event_id")
+    @Mapping(source = "user.profilePhotoPath", target = "userPhoto")
+    @Mapping(source = "user.firstName", target = "userFirstName")
+    @Mapping(source = "content", target = "commentContent")
     public abstract CommentDto commentToDto(Comment comment);
 
     protected User mapUser(Long user_id) {

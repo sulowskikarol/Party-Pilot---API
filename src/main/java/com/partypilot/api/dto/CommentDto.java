@@ -4,10 +4,12 @@ import java.time.LocalDateTime;
 
 public class CommentDto {
     private Long id;
-    private String content;
+    private String commentContent;
     private LocalDateTime createdAt;
     private Long user_id;
     private Long event_id;
+    private String userPhoto;
+    private String userFirstName;
 
     public Long getId() {
         return id;
@@ -17,12 +19,12 @@ public class CommentDto {
         this.id = id;
     }
 
-    public String getContent() {
-        return content;
+    public String getCommentContent() {
+        return commentContent;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setCommentContent(String commentContent) {
+        this.commentContent = commentContent;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -47,5 +49,21 @@ public class CommentDto {
 
     public void setEvent_id(Long event_id) {
         this.event_id = event_id;
+    }
+
+    public String getUserPhoto() {
+        return userPhoto;
+    }
+
+    public void setUserPhoto(String userPhoto) {
+        this.userPhoto = userPhoto;
+    }
+
+    public String getUserFirstName() {
+        return userFirstName;
+    }
+
+    public void setUserFirstName(String userFirstName) {
+        this.userFirstName = userFirstName;
     }
 }

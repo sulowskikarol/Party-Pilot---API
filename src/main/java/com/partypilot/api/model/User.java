@@ -21,7 +21,7 @@ public class User {
     @NotBlank
     private String password;
 
-    private String ProfilePhotoPath;
+    private String profilePhotoPath;
 
 
     public void setId(Long id) {
@@ -73,10 +73,10 @@ public class User {
     }
 
     public String getProfilePhotoPath() {
-        return ProfilePhotoPath;
+        return profilePhotoPath;
     }
 
     public void setProfilePhotoPath(String profilePhotoPath) {
-        ProfilePhotoPath = profilePhotoPath;
+        this.profilePhotoPath = profilePhotoPath;
     }
 }
