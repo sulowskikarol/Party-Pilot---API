@@ -8,6 +8,7 @@ import com.partypilot.api.dto.EventDto;
 import com.partypilot.api.dto.EventShortDto;
 import com.partypilot.api.mapper.CommentMapper;
 import com.partypilot.api.mapper.EventMapper;
+import com.partypilot.api.model.Comment;
 import com.partypilot.api.model.Event;
 import com.partypilot.api.repository.EventRepository;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -53,7 +55,9 @@ public class EventService {
                 .map(event -> {
                     EventDto eventDto = eventMapper.toEventDto(event);
                     List<CommentDto> commentDtos = event.getComments().stream()
-                            .map(commentMapper::commentToDto).toList();
+                            .sorted(Comparator.comparing(Comment::getCreatedAt).reversed())
+                            .map(commentMapper::commentToDto)
+                            .toList();
                     eventDto.setComments(commentDtos);
                     return eventDto;
                 });
