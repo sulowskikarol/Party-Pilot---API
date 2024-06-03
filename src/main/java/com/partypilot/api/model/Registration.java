@@ -1,5 +1,6 @@
 package com.partypilot.api.model;
 
+import com.partypilot.api.model.enums.RegistrationStatus;
 import jakarta.persistence.*;
 
 @Entity
@@ -18,7 +19,8 @@ public class Registration {
     @JoinColumn(name = "user_id")
     private User user;
 
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private RegistrationStatus status;
     private String additionalNotes;
 
     public void setId(Long id) {
@@ -45,11 +47,11 @@ public class Registration {
         this.user = user;
     }
 
-    public String getStatus() {
+    public RegistrationStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(RegistrationStatus status) {
         this.status = status;
     }
 

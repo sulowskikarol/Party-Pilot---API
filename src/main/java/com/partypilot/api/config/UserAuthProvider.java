@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.Base64;
@@ -47,6 +48,7 @@ public class UserAuthProvider {
                 .withIssuer(dto.getEmail())
                 .withIssuedAt(now)
                 .withExpiresAt(validity)
+                .withClaim("userId", dto.getId())
                 .withClaim("firstName", dto.getFirstName())
                 .withClaim("lastName", dto.getLastName())
                 .sign(Algorithm.HMAC256(secretKey));
@@ -61,6 +63,7 @@ public class UserAuthProvider {
 
         UserDto user = new UserDto(
                 decoded.getIssuer(),
+                decoded.getClaim("userId").asLong(),
                 decoded.getClaim("firstName").asString(),
                 decoded.getClaim("lastName").asString()
         );
@@ -78,6 +81,14 @@ public class UserAuthProvider {
                 .orElseThrow(() -> new AppException("Unknown user", HttpStatus.FORBIDDEN));
 
         return new UsernamePasswordAuthenticationToken(userMapper.toUserDto(user), null, Collections.emptyList());
+    }
 
+    public Long getUserIdFromToken() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof UserDto userDto) {
+            return userDto.getId();
+        } else {
+            throw new AppException("Unknown user", HttpStatus.FORBIDDEN);
+        }
     }
 }

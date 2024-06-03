@@ -2,11 +2,13 @@ package com.partypilot.api.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.partypilot.api.config.UserAuthProvider;
 import com.partypilot.api.dto.CommentDto;
 import com.partypilot.api.dto.EventDto;
 import com.partypilot.api.dto.EventShortDto;
 import com.partypilot.api.mapper.CommentMapper;
 import com.partypilot.api.mapper.EventMapper;
+import com.partypilot.api.model.Comment;
 import com.partypilot.api.model.Event;
 import com.partypilot.api.repository.EventRepository;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -26,12 +29,14 @@ public class EventService {
     private final EventRepository eventRepository;
     private final EventMapper eventMapper;
     private final CommentMapper commentMapper;
+    private final UserAuthProvider userAuthProvider;
     private static final String UPLOAD_FOLDER = "src/main/resources/static/banners/";
 
-    public EventService(EventRepository eventRepository, EventMapper eventMapper, CommentMapper commentMapper) {
+    public EventService(EventRepository eventRepository, EventMapper eventMapper, CommentMapper commentMapper, UserAuthProvider userAuthProvider) {
         this.eventRepository = eventRepository;
         this.eventMapper = eventMapper;
         this.commentMapper = commentMapper;
+        this.userAuthProvider = userAuthProvider;
     }
 
     public List<EventShortDto> getAllEvents() {
@@ -50,7 +55,9 @@ public class EventService {
                 .map(event -> {
                     EventDto eventDto = eventMapper.toEventDto(event);
                     List<CommentDto> commentDtos = event.getComments().stream()
-                            .map(commentMapper::commentToDto).toList();
+                            .sorted(Comparator.comparing(Comment::getCreatedAt).reversed())
+                            .map(commentMapper::commentToDto)
+                            .toList();
                     eventDto.setComments(commentDtos);
                     return eventDto;
                 });
@@ -91,5 +98,11 @@ public class EventService {
         }
 
         return event;
+    }
+
+    public boolean isOrganizer(Long eventId) {
+        Long userId = userAuthProvider.getUserIdFromToken();
+        Optional<Event> event = eventRepository.findById(eventId);
+        return event.isPresent() && event.get().getUserId().equals(userId);
     }
 }

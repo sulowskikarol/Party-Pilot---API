@@ -1,9 +1,9 @@
 package com.partypilot.api.mapper;
 
-import com.partypilot.api.dto.CommentDto;
+import com.partypilot.api.dto.RegistrationDto;
 import com.partypilot.api.exception.AppException;
-import com.partypilot.api.model.Comment;
 import com.partypilot.api.model.Event;
+import com.partypilot.api.model.Registration;
 import com.partypilot.api.model.User;
 import com.partypilot.api.repository.EventRepository;
 import com.partypilot.api.repository.UserRepository;
@@ -13,32 +13,30 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 
 @Mapper(componentModel = "spring")
-public abstract class CommentMapper {
+public abstract class RegistrationMapper {
     @Autowired
     protected UserRepository userRepository;
     @Autowired
     protected EventRepository eventRepository;
 
-    @Mapping(source = "user_id", target = "user")
-    @Mapping(source = "event_id", target = "event")
-    @Mapping(source = "commentContent", target = "content")
-    public abstract Comment dtoToComment(CommentDto commentDto);
+    @Mapping(source = "userId", target = "user")
+    @Mapping(source = "eventId", target = "event")
+    public abstract Registration dtoToRegistration(RegistrationDto registrationDto);
 
-    @Mapping(source = "user.id", target = "user_id")
-    @Mapping(source = "event.id", target = "event_id")
-    @Mapping(source = "user.profilePhotoPath", target = "userPhoto")
+    @Mapping(source = "user.id", target = "userId")
     @Mapping(source = "user.firstName", target = "userFirstName")
-    @Mapping(source = "content", target = "commentContent")
-    public abstract CommentDto commentToDto(Comment comment);
+    @Mapping(source = "user.lastName", target = "userLastName")
+    @Mapping(source = "user.profilePhotoPath", target = "userPhotoPath")
+    @Mapping(source = "event.id", target = "eventId")
+    public abstract RegistrationDto registrationToDto(Registration registration);
 
-    protected User mapUser(Long user_id) {
-        return userRepository.findById(user_id)
+    protected User mapUser(Long userId) {
+        return userRepository.findById(userId)
                 .orElseThrow(() -> new AppException("User not found", HttpStatus.NOT_FOUND));
     }
 
-    protected Event mapEvent(Long event_id) {
-        return eventRepository.findById(event_id)
+    protected Event mapEvent(Long eventId) {
+        return eventRepository.findById(eventId)
                 .orElseThrow(() -> new AppException("Event not found", HttpStatus.NOT_FOUND));
     }
-
 }
