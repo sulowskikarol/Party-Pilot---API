@@ -24,6 +24,9 @@ public abstract class RegistrationMapper {
     public abstract Registration dtoToRegistration(RegistrationDto registrationDto);
 
     @Mapping(source = "user.id", target = "userId")
+    @Mapping(source = "user.firstName", target = "userFirstName")
+    @Mapping(source = "user.lastName", target = "userLastName")
+    @Mapping(source = "user.profilePhotoPath", target = "userPhotoPath")
     @Mapping(source = "event.id", target = "eventId")
     public abstract RegistrationDto registrationToDto(Registration registration);
 

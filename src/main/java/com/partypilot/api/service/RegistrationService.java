@@ -36,6 +36,12 @@ public class RegistrationService {
                 .collect(Collectors.toList());
     }
 
+    public List<RegistrationDto> getConfirmedRegistrationsForEvent(Long eventId) {
+        return registrationRepository.findRegistrationsByEventIdAndStatus(eventId, RegistrationStatus.CONFIRMED)
+                .stream().map(registrationMapper::registrationToDto)
+                .collect(Collectors.toList());
+    }
+
     public RegistrationDto createRegistration(RegistrationDto registrationDto) {
         if (isUserRegisteredForEvent(registrationDto.getEventId())) {
             throw new AppException("User already registered", HttpStatus.CONFLICT);
@@ -63,8 +69,13 @@ public class RegistrationService {
                 }).orElseThrow(() -> new AppException("Registration not found", HttpStatus.NOT_FOUND));
     }
 
-    public void deleteRegistration(Long registrationId) {
-        registrationRepository.deleteById(registrationId);
+    public void deleteRegistration(Long eventId) {
+        Long userId = userAuthProvider.getUserIdFromToken();
+        registrationRepository.findByUserIdAndEventId(userId, eventId)
+                        .map(registration -> {
+                            registrationRepository.deleteById(registration.getId());
+                            return null;
+                        });
     }
 
     public EventAuthorizationDto generateEventAuthorizationDto(Long eventId) {
@@ -73,7 +84,7 @@ public class RegistrationService {
 
         boolean isRegistered = registration.isPresent();
         boolean isApproved = registration.isPresent() && registration.get().getStatus().equals(RegistrationStatus.CONFIRMED);
-        boolean isOrganizer = eventService.isOrganizer(userId);
+        boolean isOrganizer = eventService.isOrganizer(eventId);
 
         return new EventAuthorizationDto(isRegistered, isApproved, isOrganizer);
     }

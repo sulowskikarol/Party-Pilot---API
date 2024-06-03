@@ -6,6 +6,9 @@ public class RegistrationDto {
     private Long id;
     private Long eventId;
     private Long userId;
+    private String userPhotoPath;
+    private String userFirstName;
+    private String userLastName;
     private RegistrationStatus status;
     private String additionalNotes;
 
@@ -31,6 +34,30 @@ public class RegistrationDto {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public String getUserPhotoPath() {
+        return userPhotoPath;
+    }
+
+    public void setUserPhotoPath(String userPhotoPath) {
+        this.userPhotoPath = userPhotoPath;
+    }
+
+    public String getUserFirstName() {
+        return userFirstName;
+    }
+
+    public void setUserFirstName(String userFirstName) {
+        this.userFirstName = userFirstName;
+    }
+
+    public String getUserLastName() {
+        return userLastName;
+    }
+
+    public void setUserLastName(String userLastName) {
+        this.userLastName = userLastName;
     }
 
     public RegistrationStatus getStatus() {

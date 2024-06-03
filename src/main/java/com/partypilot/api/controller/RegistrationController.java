@@ -23,6 +23,12 @@ public class RegistrationController {
         return ResponseEntity.ok(registrationDtoList);
     }
 
+    @GetMapping("/{eventId}/confirmed")
+    public ResponseEntity<List<RegistrationDto>> getConfirmedRegistrationsForEvent(@PathVariable Long eventId) {
+        List<RegistrationDto> registrationDtoList = registrationService.getConfirmedRegistrationsForEvent(eventId);
+        return ResponseEntity.ok(registrationDtoList);
+    }
+
     @PostMapping
     public ResponseEntity<RegistrationDto> createRegistration(@RequestBody RegistrationDto registrationDto) {
         RegistrationDto response = registrationService.createRegistration(registrationDto);
@@ -41,9 +47,9 @@ public class RegistrationController {
         return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteRegistration(@PathVariable Long id) {
-        registrationService.deleteRegistration(id);
+    @DeleteMapping("/{eventId}")
+    public ResponseEntity<?> deleteRegistration(@PathVariable Long eventId) {
+        registrationService.deleteRegistration(eventId);
         return ResponseEntity.ok().build();
     }
 
