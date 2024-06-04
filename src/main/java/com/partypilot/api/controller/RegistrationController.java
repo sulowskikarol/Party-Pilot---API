@@ -52,9 +52,4 @@ public class RegistrationController {
         registrationService.deleteRegistration(eventId);
         return ResponseEntity.ok().build();
     }
-
-    @GetMapping("/{eventId}/check-authorization")
-    public ResponseEntity<EventAuthorizationDto> checkUserRegistration(@PathVariable Long eventId) {
-        return ResponseEntity.ok(registrationService.generateEventAuthorizationDto(eventId));
-    }
 }
