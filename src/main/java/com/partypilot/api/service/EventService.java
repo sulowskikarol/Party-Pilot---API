@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -41,6 +42,13 @@ public class EventService {
 
     public List<EventShortDto> getAllEvents() {
         return eventRepository.findAll()
+                .stream()
+                .map(eventMapper::toEventShortDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<EventShortDto> getAllCurrentEvents() {
+        return eventRepository.findByEndTimeAfter(LocalDateTime.now())
                 .stream()
                 .map(eventMapper::toEventShortDto)
                 .collect(Collectors.toList());

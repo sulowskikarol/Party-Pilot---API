@@ -78,18 +78,13 @@ public class RegistrationService {
                         });
     }
 
-    public EventAuthorizationDto generateEventAuthorizationDto(Long eventId) {
+    public boolean isUserApprovedForEvent(Long eventId) {
         Long userId = userAuthProvider.getUserIdFromToken();
         Optional<Registration> registration = registrationRepository.findByUserIdAndEventId(userId, eventId);
-
-        boolean isRegistered = registration.isPresent();
-        boolean isApproved = registration.isPresent() && registration.get().getStatus().equals(RegistrationStatus.CONFIRMED);
-        boolean isOrganizer = eventService.isOrganizer(eventId);
-
-        return new EventAuthorizationDto(isRegistered, isApproved, isOrganizer);
+        return registration.isPresent() && registration.get().getStatus().equals(RegistrationStatus.CONFIRMED);
     }
 
-    private boolean isUserRegisteredForEvent(Long eventId) {
+    public boolean isUserRegisteredForEvent(Long eventId) {
         Long userId = userAuthProvider.getUserIdFromToken();
         return registrationRepository.existsByUserIdAndEventId(userId, eventId);
     }

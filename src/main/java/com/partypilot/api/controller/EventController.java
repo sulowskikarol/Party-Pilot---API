@@ -27,6 +27,11 @@ public class EventController {
         return ResponseEntity.ok(eventService.getAllEvents());
     }
 
+    @GetMapping("/current")
+    public ResponseEntity<List<EventShortDto>> getCurrentEvents() {
+        return ResponseEntity.ok(eventService.getAllCurrentEvents());
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<EventDto> getEvent(@PathVariable Long id) {
         return eventService.getEventByIdWithComments(id)
